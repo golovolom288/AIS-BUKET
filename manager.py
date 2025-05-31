@@ -7,7 +7,7 @@ w = PyQt6.QtWidgets
 c = PyQt6.QtCore
 
 
-class AdminWindow(w.QWidget):
+class ManagerWindow(w.QWidget):
 
     def __init__(self):
         super().__init__()
@@ -38,15 +38,49 @@ class AdminWindow(w.QWidget):
         self.setLayout(main_layout)
 
         tab = w.QTabWidget(self)
-        tab.resize(self.size().width()-5, int(self.size().height()*0.9))
-        tab.move(5, self.size().height() - tab.size().height()-5)
+        tab.resize(self.size().width() - 5, int(self.size().height() * 0.9))
+        tab.move(5, self.size().height() - tab.size().height() - 5)
         tab.setStyleSheet("QTabBar::tab { height: 30px; width: 100px; }")
 
-        # staff page
+        # products page
 
         staff_page = w.QWidget(self)
         layout = w.QHBoxLayout()
         staff_page.setLayout(layout)
+
+        button_add_flowers = w.QPushButton("Добавить цветы", self)
+        button_add_flowers.setFixedSize(100, 35)
+
+        button_add_bouquet = w.QPushButton("Добавить букет", self)
+        button_add_bouquet.setFixedSize(100, 35)
+
+        button_change = w.QPushButton("Редактировать", self)
+        button_change.setFixedSize(100, 35)
+
+        button_remove = w.QPushButton("Удалить", self)
+        button_remove.setFixedSize(130, 35)
+
+        layout.addWidget(button_add_flowers, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(button_add_bouquet, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(button_change, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(button_remove, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
+        layout.addStretch(0)
+
+        table = w.QTableWidget(3, 7)
+        table.setGeometry(10, 70, self.size().width() - 25, 500)
+        for i in range(5):
+            table.setColumnWidth(i, int((table.size().width()+70) / 7))
+            table.setRowHeight(i, 15)
+        table.setHorizontalHeaderLabels(["ID", "Артикул", "Название", "Тип", "Цена", "Количество", "Поставщик"])
+        table_layout = w.QGridLayout()
+        table_layout.addWidget(table, 3, 3)
+        layout.addChildLayout(table_layout)
+
+        # supplier page
+
+        supplier_page = w.QWidget(self)
+        layout = w.QHBoxLayout()
+        supplier_page.setLayout(layout)
 
         button_add = w.QPushButton("Добавить", self)
         button_add.setFixedSize(100, 35)
@@ -54,21 +88,18 @@ class AdminWindow(w.QWidget):
         button_change.setFixedSize(100, 35)
         button_remove = w.QPushButton("Удалить", self)
         button_remove.setFixedSize(100, 35)
-        button_salary = w.QPushButton("Рассчитать зарплату", self)
-        button_salary.setFixedSize(130, 35)
 
         layout.addWidget(button_add, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(button_change, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(button_remove, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(button_salary, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addStretch(0)
 
         table = w.QTableWidget(3, 5)
         table.setGeometry(10, 70, self.size().width() - 25, 500)
         for i in range(5):
-            table.setColumnWidth(i, int((table.size().width() - 20) / 5))
+            table.setColumnWidth(i, int((table.size().width()-30) / 5))
             table.setRowHeight(i, 15)
-        table.setHorizontalHeaderLabels(["ID", "Логин", "Имя", "Роль", "Оклад"])
+        table.setHorizontalHeaderLabels(["ID", "Название", "Контактное лицо", "Телефон", "Email"])
         table_layout = w.QGridLayout()
         table_layout.addWidget(table, 3, 3)
         layout.addChildLayout(table_layout)
@@ -81,18 +112,18 @@ class AdminWindow(w.QWidget):
 
         label1 = w.QLabel("Период: ")
         label1.setStyleSheet("font-size: 18px; margin-top: 5px")
-        
+
         start_date = w.QLineEdit()
         start_date.setFixedSize(100, 35)
         start_date.setStyleSheet("font-size: 18px; margin-top: 5px")
-        
+
         label2 = w.QLabel("по")
         label2.setStyleSheet("font-size: 18px; margin-top: 5px")
-        
+
         final_date = w.QLineEdit()
         final_date.setFixedSize(100, 35)
         final_date.setStyleSheet("font-size: 18px; margin-top: 5px")
-        
+
         results_btn = w.QPushButton("Сформировать", self)
         results_btn.setFixedSize(130, 40)
 
@@ -113,10 +144,9 @@ class AdminWindow(w.QWidget):
         table_layout.addWidget(table, 1, 3)
         layout.addChildLayout(table_layout)
 
-
-
         # add pane to the tab widget
-        tab.addTab(staff_page, 'Сотрудники')
+        tab.addTab(staff_page, 'Товары')
+        tab.addTab(supplier_page, 'Поставщики')
         tab.addTab(results_page, 'Отчёты')
 
         main_layout.addWidget(tab)
@@ -126,5 +156,4 @@ class AdminWindow(w.QWidget):
         from auth import AuthWindow
         self.window = AuthWindow()
         self.window.show()
-
 
