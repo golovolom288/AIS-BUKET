@@ -3,6 +3,7 @@ import PyQt6.QtCore
 
 import sys
 
+from manager import ManagerWindow
 from seller import SellerWindow
 
 w = PyQt6.QtWidgets
@@ -21,6 +22,9 @@ class MainWindow(w.QMainWindow):
             self.window.show()
         elif user_data == "seller":
             self.window = SellerWindow()
+            self.window.show()
+        elif user_data == "manager":
+            self.window = ManagerWindow()
             self.window.show()
         else:
             self.auth_function()

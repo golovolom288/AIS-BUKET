@@ -60,6 +60,9 @@ class AuthWindow(w.QWidget):
         elif self.login.text() == "seller" and self.password.text() == "1":
             check = True
             self.close()
+        elif self.login.text() == "manager" and self.password.text() == "1":
+            check = True
+            self.close()
 
     def closeEvent(self, event):
         if not check:

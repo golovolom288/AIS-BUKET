@@ -53,64 +53,103 @@ class SellerWindow(w.QWidget):
         search.setStyleSheet("margin-top: 3px")
         search.setFixedSize(200, 25)
         label_shop = w.QLabel("Корзина")
-        label_shop.setStyleSheet("font-size: 18px; margin-left: 500px")
+        label_shop.setStyleSheet("font-size: 18px; margin-left: 490px")
         layout.addWidget(label_search, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(search, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addWidget(label_shop, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
         layout.addStretch(0)
-        table = w.QTableWidget(3, 6)
-        table.setGeometry(10, 70, int(self.size().width()*0.6), 500)
+        table_products = w.QTableWidget(3, 6)
+        table_products.setGeometry(10, 60, int(self.size().width()*0.6), 500)
         for i in range(6):
-            table.setColumnWidth(i, int((table.size().width() - 20) / 5))
-            table.setRowHeight(i, 15)
-        table.setHorizontalHeaderLabels(["ID", "Артикул", "Название", "Тип", "Цена", "Остаток"])
+            table_products.setColumnWidth(i, int((table_products.size().width()-15) / 6))
+            table_products.setRowHeight(i, 15)
+        table_products.setHorizontalHeaderLabels(["ID", "Артикул", "Название", "Тип", "Цена", "Остаток"])
+        table_shop = w.QTableWidget(3, 4)
+        table_shop.setGeometry(self.size().width()-350, 60, int(self.size().width() * 0.3), 500)
+        for i in range(4):
+            table_shop.setColumnWidth(i, int((table_shop.size().width() - 15) / 4))
+            table_shop.setRowHeight(i, 15)
+        table_shop.setHorizontalHeaderLabels(["Товар", "Цена", "Кол-во", "Сумма"])
         table_layout = w.QGridLayout()
-        table_layout.addWidget(table, 3, 3)
+        table_layout.addWidget(table_products)
+        table_layout.addWidget(table_shop)
+        table_layout.setSpacing(30)
         layout.addChildLayout(table_layout)
 
-        # results page
+        # storage page
 
         results_page = w.QWidget(self)
         layout = w.QHBoxLayout()
         results_page.setLayout(layout)
-
-        label1 = w.QLabel("Период: ")
-        label1.setStyleSheet("font-size: 18px; margin-top: 5px")
-
-        start_date = w.QLineEdit()
-        start_date.setFixedSize(100, 35)
-        start_date.setStyleSheet("font-size: 18px; margin-top: 5px")
-
-        label2 = w.QLabel("по")
-        label2.setStyleSheet("font-size: 18px; margin-top: 5px")
-
-        final_date = w.QLineEdit()
-        final_date.setFixedSize(100, 35)
-        final_date.setStyleSheet("font-size: 18px; margin-top: 5px")
-
-        results_btn = w.QPushButton("Сформировать", self)
-        results_btn.setFixedSize(130, 40)
-
-        layout.addWidget(label1, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(start_date, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(label2, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(final_date, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addWidget(results_btn, alignment=c.Qt.AlignmentFlag.AlignTop | c.Qt.AlignmentFlag.AlignLeft)
-        layout.addStretch(0)
-
-        table = w.QTableWidget(3, 4)
-        table.setGeometry(10, 70, self.size().width() - 25, 500)
-        for i in range(4):
-            table.setColumnWidth(i, int((table.size().width() - 25) / 4))
+        table = w.QTableWidget(3, 6)
+        table.setGeometry(10, 70, self.size().width()-45, 500)
+        for i in range(6):
+            table.setColumnWidth(i, int((table.size().width() - 15) / 6))
             table.setRowHeight(i, 15)
-        table.setHorizontalHeaderLabels(["Дата", "Продавец", "Сумма", "Количество"])
-        table_layout = w.QGridLayout()
-        table_layout.addWidget(table, 1, 3)
-        layout.addChildLayout(table_layout)
+        table.setHorizontalHeaderLabels(["ID", "Артикул", "Название", "Тип", "Цена", "Количество"])
+        layout.addWidget(table)
+
+        # write-off page
+
+        write_off_page = w.QWidget(self)
+        layout = w.QGridLayout()
+        write_off_page.setLayout(layout)
+
+        label_product = w.QLabel("Товар:")
+        label_product.setStyleSheet("font-size: 18px;")
+
+        label_count = w.QLabel("Количество:")
+        label_count.setStyleSheet("font-size: 18px;")
+
+        label_reason = w.QLabel("Причина:")
+        label_reason.setStyleSheet("font-size: 18px;")
+
+        label_table = w.QLabel("Cписания")
+        label_table.setStyleSheet("font-size: 18px;")
+
+        ledit_product = w.QLineEdit()
+        ledit_product.setStyleSheet("font-size: 18px;")
+        ledit_product.setFixedSize(120, 25)
+
+        ledit_count = w.QLineEdit()
+        ledit_count.setStyleSheet("font-size: 18px;")
+        ledit_count.setFixedSize(120, 25)
+
+        ledit_reason = w.QLineEdit()
+        ledit_reason.setStyleSheet("font-size: 18px;")
+        ledit_reason.setFixedSize(120, 25)
+
+        layout.setHorizontalSpacing(10)
+        layout.setVerticalSpacing(10)
+        layout.setContentsMargins(15, 15, 15, 15)
+        spacer = w.QSpacerItem(20, 40, w.QSizePolicy.Policy.Expanding, w.QSizePolicy.Policy.Expanding)
+        table = w.QTableWidget(3, 4)
+        table.setGeometry(10, 70, self.size().width() - 45, 500)
+        for i in range(4):
+            table.setColumnWidth(i, int((table.size().width() - 30) / 4))
+            table.setRowHeight(i, 15)
+        table.setHorizontalHeaderLabels(["ID", "Артикул", "Название", "Тип", "Цена", "Количество"])
+
+        button_accept = w.QPushButton("Списать")
+        button_accept.setFixedSize(100, 30)
+        layout.addWidget(label_product, 0, 0)
+        layout.addWidget(label_count, 1, 0)
+        layout.addWidget(label_reason, 2, 0)
+        layout.addWidget(ledit_product, 0, 1)
+        layout.addWidget(ledit_count, 1, 1)
+        layout.addWidget(ledit_reason, 2, 1)
+        layout.addWidget(button_accept, 3, 1)
+        layout.addWidget(label_table, 4, 0)
+        layout.addWidget(table, 5, 0, 5, 4)
+
+        layout.addItem(spacer, 0, 0, 3, 3)
+        layout.addItem(spacer, 5, 0)
+        layout.setColumnStretch(3, 3)
 
         # add pane to the tab widget
         tab.addTab(staff_page, 'Продажи')
         tab.addTab(results_page, 'Склад')
+        tab.addTab(write_off_page, 'Списания')
 
         main_layout.addWidget(tab)
 
