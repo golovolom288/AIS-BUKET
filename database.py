@@ -149,12 +149,27 @@ class Database:
         row = self.execute_query("SELECT * FROM users WHERE id = ?", (user_id,), fetch_one=True)
         return dict(row) if row else None
 
-    def update_user(self, user_id: int, login: str, full_name: str, role: str, position: Optional[str], salary: float, sales_percent: float, password: Optional[str] = None) -> bool:
-        query_parts = ["login = ?", "full_name = ?", "role = ?", "position = ?", "salary = ?", "sales_percent = ?"]
-        params = [login, full_name, role, position, salary, sales_percent]
+    def update_user(self, user_id: int, login: str, password: str, full_name: str, role: str, position: Optional[str], salary: float = 0, sales_percent: float = 0) -> bool:
+        query_parts = ["login = ?"]
+        params = [login]
         if password:
             query_parts.append("password = ?") # Пароль должен быть хеширован перед сохранением
             params.append(password)
+        if full_name:
+            query_parts.append("full_name = ?")
+            params.append(full_name)
+        if role:
+            query_parts.append("role = ?")
+            params.append(role)
+        if position:
+            query_parts.append("position = ?")
+            params.append(position)
+        if salary != 0:
+            query_parts.append("salary = ?")
+            params.append(salary)
+        if sales_percent != 0:
+            query_parts.append("sales_percent = ?")
+            params.append(sales_percent)
         params.append(user_id)
         query = f"UPDATE users SET {', '.join(query_parts)} WHERE id = ?"
         return self.execute_query(query, tuple(params), commit=True) is not None
@@ -180,6 +195,10 @@ class Database:
         rows = self.execute_query(query, fetch_all=True)
         return [dict(row) for row in rows] if rows else []
 
+    def get_model(self, model_name):
+        model = self.execute_query(f"SELECT * FROM {model_name}", fetch_all=True)
+        return model
+    
     def get_product_by_id(self, product_id: int) -> Optional[Dict]:
         query = """
             SELECT p.*, s.name as supplier_name
