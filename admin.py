@@ -427,8 +427,7 @@ class AdminWindow(w.QWidget):
         label2 = w.QLabel('Начальная дата:')
         label3 = w.QLabel('Конечная дата:')
         for user in db.get_model("users"):
-            if user != user_data:
-                login_edit.addItem(user["login"])
+            login_edit.addItem(user["login"])
         start_date = w.QDateEdit()
         end_date = w.QDateEdit()
 
