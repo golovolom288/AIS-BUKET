@@ -2,15 +2,19 @@ import PyQt6.QtWidgets
 import PyQt6.QtCore
 import sys
 
+from database import Database
+
 w = PyQt6.QtWidgets
 c = PyQt6.QtCore
 
 check = False
-
+db = Database("test_bouquet_store.db")
+user = ""
 
 class AuthWindow(w.QWidget):
     def __init__(self):
         super().__init__()
+
 
         self.setWindowTitle("Auth Panel")
 
@@ -53,14 +57,10 @@ class AuthWindow(w.QWidget):
         self.setGeometry(window_pos.x(), window_pos.y(), 250, 100)
 
     def login_acc(self):
+        global user
+        user = db.get_user_by_login(self.login.text())
         global check
-        if self.login.text() == "admin" and self.password.text() == "admin":
-            check = True
-            self.close()
-        elif self.login.text() == "seller" and self.password.text() == "1":
-            check = True
-            self.close()
-        elif self.login.text() == "manager" and self.password.text() == "1":
+        if user and self.password.text() == user["password"]:
             check = True
             self.close()
 
@@ -70,5 +70,5 @@ class AuthWindow(w.QWidget):
         else:
             from main import MainWindow
             self.close()
-            self.window = MainWindow(user_data=self.login.text())
+            self.window = MainWindow(user_data=user)
 
