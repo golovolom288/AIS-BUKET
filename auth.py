@@ -22,8 +22,6 @@ class AuthWindow(w.QWidget):
 
         self.setup_widgets()
 
-
-
     def setup_widgets(self):
 
         # Поле логина
