@@ -9,7 +9,7 @@ from database import Database
 
 w = PyQt6.QtWidgets
 c = PyQt6.QtCore
-db = Database("test_bouquet_store.db")
+db = Database()
 
 
 class MainWindow(w.QMainWindow):
@@ -23,12 +23,12 @@ class MainWindow(w.QMainWindow):
                 from admin import AdminWindow
                 self.window = AdminWindow(user_data)
                 self.window.show()
-        #     elif user_data == "seller":
-        #         self.window = SellerWindow()
-        #         self.window.show()
-        #     elif user_data == "manager":
-        #         self.window = ManagerWindow()
-        #         self.window.show()
+            # elif user_data == "seller":
+            #     self.window = SellerWindow()
+            #     self.window.show()
+            elif user_data["role"] == "manager":
+                self.window = ManagerWindow(user_data)
+                self.window.show()
         except Exception:
             self.auth_function()
 

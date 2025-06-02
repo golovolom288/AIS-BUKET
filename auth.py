@@ -8,7 +8,7 @@ w = PyQt6.QtWidgets
 c = PyQt6.QtCore
 
 check = False
-db = Database("test_bouquet_store.db")
+db = Database()
 user = ""
 
 class AuthWindow(w.QWidget):

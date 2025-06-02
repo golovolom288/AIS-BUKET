@@ -5,7 +5,7 @@ from database import Database
 
 w = PyQt6.QtWidgets
 c = PyQt6.QtCore
-db = Database("test_bouquet_store.db")
+db = Database()
 table_users_columns = [
     'id',
     'login',
@@ -21,6 +21,7 @@ table_results_columns = [
 ]
 user_data = ""
 
+
 class AdminWindow(w.QWidget):
 
     def __init__(self, user):
@@ -28,7 +29,7 @@ class AdminWindow(w.QWidget):
 
         global user_data
         user_data = user
-        self.setWindowTitle(f"Администратор - {user_data['full_name']}")
+        self.setWindowTitle(f"{user_data['position']} - {user_data['full_name']}")
 
         self.setup_window()
 
@@ -153,7 +154,7 @@ class AdminWindow(w.QWidget):
         def add_user():
             salary = 0
             percent = 0
-            if not login_edit.text() and not password_edit.text():
+            if not login_edit.text() or not password_edit.text():
                 self.window.close()
                 self.window = AdminWindow(user_data)
                 self.window.show()
@@ -391,7 +392,7 @@ class AdminWindow(w.QWidget):
             label1 = w.QLabel('Логин: ' + str(selected_user["login"]))
             label2 = w.QLabel('Процент продаж: ' + str(selected_user["sales_percent"]))
             label3 = w.QLabel('Оклад: ' + str(selected_user["salary"]))
-            label_result = w.QLabel(str(selected_user["salary"] + selected_user["salary"]*selected_user["sales_percent"]))
+            label_result = w.QLabel(str(selected_user["salary"] + selected_user["salary"]*selected_user["sales_percent"]/100))
             exit_button = w.QPushButton("ОК")
             exit_button.clicked.connect(self.exit_from_form)
 

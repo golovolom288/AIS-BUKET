@@ -39,9 +39,9 @@ class Database:
             # Для тестового блока if __name__ == '__main__' можно не выводить эту ошибку,
             # так как мы будем проверять наличие записи перед вставкой.
             # Для обычных вызовов методов add_... важно, чтобы None возвращался.
-            # print(f"Ошибка целостности данных (возможно, дубликат UNIQUE): {e}")
-            # print(f"Запрос: {query}")
-            # print(f"Параметры: {params}")
+            print(f"Ошибка целостности данных (возможно, дубликат UNIQUE): {e}")
+            print(f"Запрос: {query}")
+            print(f"Параметры: {params}")
             if commit:
                 self.conn.rollback()
             return None
@@ -60,7 +60,7 @@ class Database:
                 login TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL, -- В реальном приложении храните хеши паролей!
                 full_name TEXT NOT NULL,
-                role TEXT NOT NULL CHECK(role IN ('administrator', 'manager', 'seller')),
+                role TEXT NOT NULL CHECK(role IN ('admin', 'manager', 'seller')),
                 position TEXT,
                 salary REAL DEFAULT 0,
                 sales_percent REAL DEFAULT 0
@@ -84,8 +84,8 @@ class Database:
                 supplier_id INTEGER,
                 description TEXT,
                 price REAL NOT NULL,
-                photo_path TEXT,
                 quantity INTEGER NOT NULL DEFAULT 0,
+                photo_path TEXT,
                 FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE SET NULL
             )
         ''')
@@ -178,12 +178,12 @@ class Database:
         return self.execute_query("DELETE FROM users WHERE id = ?", (user_id,), commit=True) is not None
 
     # --- Методы для Товаров ---
-    def add_product(self, article: str, name: str, supplier_id: Optional[int], description: Optional[str], price: float, photo_path: Optional[str], quantity: int) -> Optional[int]:
+    def add_product(self, article: str, name: str, supplier_id: Optional[int], description: Optional[str], price: float, quantity: int, photo_path: Optional[str]) -> Optional[int]:
         query = '''
-            INSERT INTO products (article, name, supplier_id, description, price, photo_path, quantity)
+            INSERT INTO products (article, name, supplier_id, description, price, quantity, photo_path)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
-        return self.execute_query(query, (article, name, supplier_id, description, price, photo_path, quantity), commit=True)
+        return self.execute_query(query, (article, name, supplier_id, description, price, quantity, photo_path), commit=True)
 
     def get_all_products(self) -> List[Dict]:
         query = """
@@ -219,13 +219,30 @@ class Database:
         row = self.execute_query(query, (article,), fetch_one=True)
         return dict(row) if row else None
 
-    def update_product(self, product_id: int, article: str, name: str, supplier_id: Optional[int], description: Optional[str], price: float, photo_path: Optional[str], quantity: int) -> bool:
-        query = '''
-            UPDATE products
-            SET article = ?, name = ?, supplier_id = ?, description = ?, price = ?, photo_path = ?, quantity = ?
-            WHERE id = ?
-        '''
-        return self.execute_query(query, (article, name, supplier_id, description, price, photo_path, quantity, product_id), commit=True) is not None
+    def update_product(self, product_id: int, article: str, name: str, supplier_id: Optional[int], description: Optional[str], price: float, quantity: int, photo_path: Optional[str]) -> bool:
+        query_parts = ["article = ?"]
+        params = [article]
+        if name:
+            query_parts.append("name = ?")
+            params.append(name)
+        if supplier_id:
+            query_parts.append("supplier_id = ?")
+            params.append(supplier_id)
+        if description:
+            query_parts.append("description = ?")
+            params.append(description)
+        if price != 0:
+            query_parts.append("price = ?")
+            params.append(price)
+        if quantity != 0:
+            query_parts.append("quantity = ?")
+            params.append(quantity)
+        if photo_path:
+            query_parts.append("photo_path = ?")
+            params.append(photo_path)
+        params.append(product_id)
+        query = f"UPDATE products SET {', '.join(query_parts)} WHERE id = ?"
+        return self.execute_query(query, tuple(params), commit=True) is not None
 
     def delete_product(self, product_id: int) -> bool:
         # В SQLite ON DELETE RESTRICT по умолчанию, так что IntegrityError будет возбужден, если товар используется.
@@ -267,11 +284,24 @@ class Database:
         row = self.execute_query("SELECT * FROM suppliers WHERE name = ?", (name,), fetch_one=True)
         return dict(row) if row else None
 
-    def update_supplier(self, supplier_id: int, name: str, contact_person: Optional[str], phone: Optional[str], email: Optional[str], address: Optional[str]) -> bool:
-        query = '''
-            UPDATE suppliers SET name = ?, contact_person = ?, phone = ?, email = ?, address = ? WHERE id = ?
-        '''
-        return self.execute_query(query, (name, contact_person, phone, email, address, supplier_id), commit=True) is not None
+    def update_supplier(self, supplier_id: int, name: str, contact_person: Optional[str] = None, phone: Optional[str] = None, email: Optional[str] = None, address: Optional[str] = None) -> Optional[int]:
+        query_parts = ["article = ?"]
+        params = [name]
+        if contact_person:
+            query_parts.append("contact_person = ?")
+            params.append(contact_person)
+        if phone:
+            query_parts.append("phone = ?")
+            params.append(phone)
+        if email:
+            query_parts.append("email = ?")
+            params.append(email)
+        if address:
+            query_parts.append("address = ?")
+            params.append(address)
+        params.append(supplier_id)
+        query = f"UPDATE products SET {', '.join(query_parts)} WHERE id = ?"
+        return self.execute_query(query, tuple(params), commit=True) is not None
 
     def delete_supplier(self, supplier_id: int) -> bool:
         return self.execute_query("DELETE FROM suppliers WHERE id = ?", (supplier_id,), commit=True) is not None
